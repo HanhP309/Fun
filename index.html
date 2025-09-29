@@ -25,7 +25,7 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:24px;
+      padding:16px;
     }
     .card{
       width:min(100%, 980px);
@@ -163,6 +163,24 @@
     .btn:focus-visible{ outline:3px solid var(--focus); outline-offset:3px; }
     .sr-only{ position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden; }
     kbd{ background:#f4efe7; border:1px solid #e5d8c7; border-bottom-width:2px; border-radius:6px; padding:1px 6px; }
+  
+    /* Mobile tweaks */
+    @media(max-width:700px){
+    .scene{ min-height:620px; }
+    .phin-wrap{ width:220px; height:220px; transform:translate(-50%,-48%); }
+    .bubble{ --size:108px; padding:10px; }
+    .bubble span{
+      font-size:13px; line-height:1.15;
+      word-break: keep-all;
+    }
+    .b1{ left:50%; top:6%;  transform:translateX(-50%); }
+    .b2{ left:50%; top:28%; transform:translateX(-50%); }
+    .b3{ left:16px; bottom:8%; transform:none; }
+    .b4{ right:16px; bottom:8%; transform:none; }
+  
+    header h1{ font-size:20px; }
+    .panel{ min-height:480px; }
+    }  
   </style>
 </head>
 <body>
