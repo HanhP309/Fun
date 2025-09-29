@@ -31,7 +31,7 @@
     /* Scene (left) */
     .scene{position:relative;display:flex;align-items:center;justify-content:center;border:1px dashed #efdfcf;border-radius:16px;padding:14px;min-height:540px;background:#fffefb;}
     /* Phin SVG */
-    .phin-wrap{ pointer-events:none;z-index:0;position:absolute; left:50%; top:50%; transform:translate(-50%,-52%); width:300px; height:300px; }
+    .phin-wrap{ pointer-events:none;position:absolute; left:50%; top:50%; transform:translate(-50%,-52%); width:300px; height:300px; }
     .phin{ position:absolute; inset:0; }
     .steam{ position:absolute; left:55%; top:-8px; width:2px; height:24px; filter: blur(2px);}
     .steam::before, .steam::after{
@@ -45,7 +45,7 @@
     /* Bubbles (desktop orbit) */
     .bubble{
       --size:132px;
-      position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:8px;
+      position:absolute;display:flex;align-items:center;justify-content:center;gap:8px;
       width:var(--size);height:var(--size);border-radius:50%;
       background:radial-gradient(closest-side,var(--bubble),#ffe6c7);
       border:2px solid var(--ring);box-shadow:0 6px 16px rgba(0,0,0,.08);
@@ -81,11 +81,11 @@
     @media(max-width:700px){
       .scene{
         min-height:auto; padding:16px;
-        display:flex; flex-direction:column; gap:12px; overflow:hidden;
+        display:flex; flex-direction:column; gap:12px;
       }
       .phin-wrap{ position:static; width:200px; height:200px; transform:none; margin:8px auto 6px; }
       .bubble{
-        position:static; width:100%; height:auto; border-radius:14px;
+        position:static; width:auto; height:auto; border-radius:14px;
         justify-content:flex-start; padding:12px 14px; gap:10px;
       }
       .bubble::after{
