@@ -51,6 +51,10 @@
       border:2px solid var(--ring);box-shadow:0 6px 16px rgba(0,0,0,.08);
       cursor:pointer;text-align:center;padding:12px 14px;font-weight:600;line-height:1.2;
       touch-action:manipulation;
+      
+        /* 🔹 Fix: remove unwanted oval shadow/highlight */
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
     }
     .bubble:hover{ transform:translateY(-2px); }
     .bubble:focus-visible{ outline:3px solid var(--focus); outline-offset:3px; }
@@ -171,7 +175,7 @@
         <template id="section-brew">
           <h2>Brewing a Vietnamese coffee cup together</h2>
           <div class="content">
-            <p class="small">Do not pick up any coffee or drinks or whatsoever from the cafeteria, we got something better!!!</p>
+            <p class="content">Do not pick up any coffee or drinks or whatsoever from the cafeteria, we got something better!!!</p>
             <ol>
               <li>Heat water just off boil (≈ 96°C).</li>
               <li>Add 2–3 tbsp medium‑coarse Vietnamese coffee to the <em>phin</em>.</li>
