@@ -4,31 +4,34 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Coffee & Mentoring – Interactive Agenda</title>
+  <meta name="description" content="Interactive, mobile-friendly agenda with clickable items and a Vietnamese phin illustration."/>
   <style>
     :root{
       --bg1:#f7efe6;
       --bg2:#f1e3d3;
-      --ink:#3c2818;
+      --ink:#2e241d;
       --accent:#c08a5a;
       --ring:#b0794e;
       --focus:#1a73e8;
       --bubble:#fff7ec;
     }
+    *{box-sizing:border-box}
     body{
       margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color:var(--ink);
       background: radial-gradient(1200px 800px at 70% -20%, var(--bg2), transparent),
                   radial-gradient(1400px 900px at -10% 120%, var(--bg1), #fff);
       display:flex; align-items:center; justify-content:center; padding:16px;
     }
-    .card{width:min(100%,1000px);background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(60,40,24,.15);overflow:hidden;border:1px solid #eee2d5;}
+    .card{width:min(100%,1000px);background:#fff;border-radius:20px;box-shadow:0 12px 28px rgba(60,40,24,.14);overflow:hidden;border:1px solid #eee2d5;}
     header{padding:18px 20px;background:linear-gradient(135deg,#fff,#fdeede);border-bottom:1px solid #efdfcf;display:flex;align-items:center;gap:12px;}
     header h1{font-size:clamp(18px,2.5vw,28px);margin:0;}
-    main{display:grid;grid-template-columns:380px 1fr;gap:16px;padding:16px;}
+    main{display:grid;grid-template-columns:390px 1fr;gap:18px;padding:16px;}
     @media(max-width:900px){ main{ grid-template-columns:1fr; } }
-    .scene{position:relative;display:flex;align-items:center;justify-content:center;border:1px dashed #efdfcf;border-radius:16px;padding:10px;}
 
-    /* Vietnamese phin SVG + steam */
-    .phin-wrap{ pointer-events:none; }
+    /* Scene (left) */
+    .scene{position:relative;display:flex;align-items:center;justify-content:center;border:1px dashed #efdfcf;border-radius:16px;padding:14px;min-height:540px;background:#fffefb;}
+    /* Phin SVG */
+    .phin-wrap{ pointer-events:none; position:absolute; left:50%; top:50%; transform:translate(-50%,-52%); width:300px; height:300px; }
     .phin{ position:absolute; inset:0; }
     .steam{ position:absolute; left:55%; top:-8px; width:2px; height:24px; filter: blur(2px);}
     .steam::before, .steam::after{
@@ -39,180 +42,219 @@
     .steam::after{ left:-10px; animation-delay:1.2s; }
     @keyframes steam{ 0%{transform: translateY(10px) scale(.8); opacity:.25} 40%{opacity:.6} 100%{transform: translateY(-34px) scale(1.1); opacity:0} }
 
-    /* Bubbles */
+    /* Bubbles (desktop orbit) */
     .bubble{
       --size:132px;
       position:absolute;display:flex;align-items:center;justify-content:center;gap:8px;
       width:var(--size);height:var(--size);border-radius:50%;
       background:radial-gradient(closest-side,var(--bubble),#ffe6c7);
       border:2px solid var(--ring);box-shadow:0 6px 16px rgba(0,0,0,.08);
-      cursor:pointer;text-align:center;padding:12px;font-weight:600;line-height:1.2;
+      cursor:pointer;text-align:center;padding:12px 14px;font-weight:600;line-height:1.2;
       touch-action:manipulation;
     }
+    .bubble:hover{ transform:translateY(-2px); }
+    .bubble:focus-visible{ outline:3px solid var(--focus); outline-offset:3px; }
     .bubble svg{ width:22px;height:22px; flex:0 0 22px; }
     .bubble::after{content:attr(data-step);position:absolute;top:-10px;left:-10px;width:28px;height:28px;border-radius:50%;
       display:flex;align-items:center;justify-content:center;font:700 14px/1 system-ui;background:#fff;border:2px solid var(--ring);}
-
     .b1{ left:8%; top:10%; }
     .b2{ right:8%; top:10%; }
     .b3{ left:8%; bottom:12%; }
     .b4{ right:8%; bottom:12%; }
-    .phin-wrap{ position:absolute; left:50%; top:50%; transform:translate(-50%,-52%); width:300px; height:300px; }
-    .scene{ min-height:520px; }
-        
 
-    .panel{border:1px solid #efdfcf;border-radius:16px;padding:16px;background:#fffdfa;min-height:520px;}
-    h2{margin:6px 0 10px;font-size:22px;}
-    .content{font-size:16px;line-height:1.5;}
+    /* Panel (right) */
+    .panel{border:1px solid #efdfcf;border-radius:16px;padding:16px;background:#fffdfa;min-height:540px;display:flex;flex-direction:column;}
+    .pill{ align-self:flex-start; display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; background:#fff; border:1px solid #eddcc9; font-size:13px; margin-bottom:10px; }
+    .pill .dot{ width:10px; height:10px; border-radius:50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(192,138,90,.15); }
+    #panel-title{ margin:6px 0 10px; font-size:22px; }
+    #panel-content{ font-size:16px; line-height:1.5; flex:1 1 auto; }
     ol,ul{margin:8px 0 0 18px;}
+    .footer{ display:flex; justify-content:space-between; align-items:center; padding-top:12px; }
+    .small{ font-size:13px; opacity:.85; }
 
-    /* Mobile tweaks */
+    /* === MOBILE LAYOUT (<=700px) ===
+       Replace orbit with a clean vertical stack: phin on top, full-width buttons below. */
     @media(max-width:700px){
-
-    .scene{ min-height:620px; }
-    .phin-wrap{ width:220px; height:220px; transform:translate(-50%,-48%); }
-    .bubble{ --size:108px; padding:10px; }
-    .bubble span{ font-size:13px; line-height:1.15; word-break: keep-all; }
-    .b1{ left:50%; top:6%; transform:translateX(-50%); }
-    .b2{ left:50%; top:28%; transform:translateX(-50%); }
-    .b3{ left:16px; bottom:8%; transform:none; }
-    .b4{ right:16px; bottom:8%; transform:none; }
-        
-      header h1{ font-size:20px; }
-      .panel{ min-height:480px; }
+      .scene{
+        min-height:auto; padding:16px;
+        display:flex; flex-direction:column; gap:12px;
+      }
+      .phin-wrap{ position:static; width:200px; height:200px; transform:none; margin:8px auto 6px; }
+      .bubble{
+        position:static; width:100%; height:auto; border-radius:14px;
+        justify-content:flex-start; padding:12px 14px; gap:10px;
+      }
+      .bubble::after{
+        position:static; width:auto; height:auto; border-radius:999px; padding:2px 8px; margin-right:6px;
+        top:auto; left:auto; font-size:12px; border:1.5px solid var(--ring); background:#fff;
+      }
+      .panel{ min-height:auto; }
     }
   </style>
 </head>
 <body>
-<div class="card">
-  <header><h1>Coffee &amp; Mentoring Session — Agenda</h1></header>
-  <main>
-    <section class="scene" aria-label="Agenda navigation">
-      <!-- Phin illustration -->
-      <div class="phin-wrap" aria-hidden="true">
-        <svg class="phin" viewBox="0 0 200 200">
-          <ellipse cx="100" cy="180" rx="70" ry="12" fill="rgba(0,0,0,0.08)"/>
-          <rect x="70" y="80" width="60" height="80" rx="10" fill="#fefefe" stroke="#d9d7d4" stroke-width="2"/>
-          <rect x="74" y="140" width="52" height="18" rx="6" fill="#fff0cc" />
-          <rect x="74" y="100" width="52" height="40" rx="6" fill="#4b2d1b" />
-          <rect x="62" y="56" width="76" height="18" rx="4" fill="#b7b7b7" stroke="#9a9a9a" stroke-width="2"/>
-          <rect x="78" y="40" width="44" height="22" rx="4" fill="#c9c9c9" stroke="#9a9a9a" stroke-width="2"/>
-          <ellipse cx="100" cy="40" rx="28" ry="6" fill="#d6d6d6" stroke="#a8a8a8" stroke-width="2"/>
-          <rect x="122" y="42" width="24" height="6" rx="3" fill="#c9c9c9" stroke="#9a9a9a" stroke-width="1.5"/>
-          <path d="M95 24c-4 0-7 3-7 7 0 8 12 12 12 12s12-4 12-12c0-4-3-7-7-7-3 0-5 2-5 4 0-2-2-4-5-4z" fill="#ff7f7f" opacity="0.85"/>
-        </svg>
-        <div class="steam"></div>
-      </div>
+  <div class="card" role="application" aria-label="Interactive agenda for Coffee & Mentoring">
+    <header>
+      <h1>Coffee &amp; Mentoring Session — Agenda</h1>
+    </header>
 
-      <!-- Bubbles in exact order -->
-      <button class="bubble b1" data-step="1" data-target="section-brew" aria-controls="section-brew" aria-expanded="false" title="Brewing a Vietnamese coffee cup together">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 18h16v2H4z" fill="currentColor"/>
-          <rect x="7" y="6" width="10" height="5" rx="1.5" fill="currentColor" opacity=".9"/>
-          <rect x="9" y="3" width="6" height="3" rx="1" fill="currentColor" opacity=".9"/>
-          <rect x="15" y="6.5" width="4" height="2" rx="1" fill="currentColor" opacity=".9"/>
-        </svg>
-        <span>Brewing Coffee</span>
-      </button>
+    <main>
+      <!-- LEFT: Scene (orbit on desktop; vertical on mobile) -->
+      <section class="scene" aria-describedby="nav-instructions">
+        <span id="nav-instructions" class="sr-only" style="position:absolute;left:-10000px">Use tab to focus a button, then press Enter or Space to open that section.</span>
 
-      <button class="bubble b2" data-step="2" data-target="section-reflect-update" aria-controls="section-reflect-update" aria-expanded="false" title="Reflections &amp; Updates from previous mentoring session">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 4h11a2 2 0 0 1 2 2v12H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2"/>
-          <path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <rect x="5" y="4" width="2" height="14" fill="currentColor" opacity=".25"/>
-        </svg>
-        <span>Reflections &amp; Updates</span>
-      </button>
+        <!-- Vietnamese phin illustration with steam -->
+        <div class="phin-wrap" aria-hidden="true">
+          <svg class="phin" viewBox="0 0 200 200">
+            <ellipse cx="100" cy="180" rx="70" ry="12" fill="rgba(0,0,0,0.08)"/>
+            <rect x="70" y="80" width="60" height="80" rx="10" fill="#fefefe" stroke="#d9d7d4" stroke-width="2"/>
+            <rect x="74" y="140" width="52" height="18" rx="6" fill="#fff0cc" />
+            <rect x="74" y="100" width="52" height="40" rx="6" fill="#4b2d1b" />
+            <rect x="62" y="56" width="76" height="18" rx="4" fill="#b7b7b7" stroke="#9a9a9a" stroke-width="2"/>
+            <rect x="78" y="40" width="44" height="22" rx="4" fill="#c9c9c9" stroke="#9a9a9a" stroke-width="2"/>
+            <ellipse cx="100" cy="40" rx="28" ry="6" fill="#d6d6d6" stroke="#a8a8a8" stroke-width="2"/>
+            <rect x="122" y="42" width="24" height="6" rx="3" fill="#c9c9c9" stroke="#9a9a9a" stroke-width="1.5"/>
+            <path d="M95 24c-4 0-7 3-7 7 0 8 12 12 12 12s12-4 12-12c0-4-3-7-7-7-3 0-5 2-5 4 0-2-2-4-5-4z" fill="#ff7f7f" opacity="0.85"/>
+          </svg>
+          <div class="steam"></div>
+        </div>
 
-      <button class="bubble b3" data-step="3" data-target="section-questions" aria-controls="section-questions" aria-expanded="false" title="Mentoring questions">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 6h16v9a2 2 0 0 1-2 2H9l-5 4V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-        </svg>
-        <span>Mentoring Questions</span>
-      </button>
+        <!-- Agenda triggers in order -->
+        <button class="bubble b1" data-step="1" data-target="section-brew" aria-controls="section-brew" aria-expanded="false" title="Brewing a Vietnamese coffee cup together">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 18h16v2H4z" fill="currentColor"/>
+            <rect x="7" y="6" width="10" height="5" rx="1.5" fill="currentColor" opacity=".9"/>
+            <rect x="9" y="3" width="6" height="3" rx="1" fill="currentColor" opacity=".9"/>
+            <rect x="15" y="6.5" width="4" height="2" rx="1" fill="currentColor" opacity=".9"/>
+          </svg>
+          <span>Brewing Coffee</span>
+        </button>
 
-      <button class="bubble b4" data-step="4" data-target="section-location" aria-controls="section-location" aria-expanded="false" title="Location">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="currentColor"/>
-        </svg>
-        <span>Location</span>
-      </button>
+        <button class="bubble b2" data-step="2" data-target="section-reflect-update" aria-controls="section-reflect-update" aria-expanded="false" title="Reflections &amp; Updates from previous mentoring session">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 4h11a2 2 0 0 1 2 2v12H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M8 9h8M8 13h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <rect x="5" y="4" width="2" height="14" fill="currentColor" opacity=".25"/>
+          </svg>
+          <span>Reflections &amp; Updates</span>
+        </button>
 
-    </section>
+        <button class="bubble b3" data-step="3" data-target="section-questions" aria-controls="section-questions" aria-expanded="false" title="Mentoring questions">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 6h16v9a2 2 0 0 1-2 2H9l-5 4V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+          <span>Mentoring Questions</span>
+        </button>
 
-    <section class="panel" aria-live="polite">
-      <h2 id="panel-title">Agenda</h2>
-      <div id="panel-content" class="content">
-        <ol>
-          <li>Brewing a Vietnamese coffee cup together</li>
-          <li>Reflections &amp; Updates from previous mentoring session</li>
-          <li>Mentoring questions</li>
-          <li>Location</li>
-        </ol>
-      </div>
+        <button class="bubble b4" data-step="4" data-target="section-location" aria-controls="section-location" aria-expanded="false" title="Location">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="currentColor"/>
+          </svg>
+          <span>Location</span>
+        </button>
+      </section>
 
-      <template id="section-brew">
-        <h2>Brewing a Vietnamese coffee cup together</h2>
-        <div class="content">
+      <!-- RIGHT: Content panel -->
+      <section class="panel" aria-live="polite">
+        <div class="pill"><span class="dot"></span>Agenda</div>
+        <h2 id="panel-title">Agenda (follow steps 1–4)</h2>
+        <div id="panel-content">
           <ol>
-            <li>Heat water just off boil (≈ 96°C).</li>
-            <li>Add 2–3 tbsp medium‑coarse Vietnamese coffee to the <em>phin</em>.</li>
-            <li>Bloom with a splash of hot water (20–30s), then fill and let drip 4–5 minutes.</li>
-            <li>Stir in 1–2 tbsp condensed milk.</li>
+            <li>Brewing a Vietnamese coffee cup together</li>
+            <li>Reflections &amp; Updates from previous mentoring session</li>
+            <li>Mentoring questions</li>
+            <li>Location</li>
           </ol>
         </div>
-      </template>
 
-      <template id="section-reflect-update">
-        <h2>Reflections &amp; Updates from previous mentoring session</h2>
-        <div class="content">
-          <ul>
-            <li>Updates on the contributions &amp; learnings in gig with Adhesive Materials</li>
-            <li>Updates on recent career interests and actions</li>
-          </ul>
+        <!-- Templates -->
+        <template id="section-brew">
+          <h2>Brewing a Vietnamese coffee cup together</h2>
+          <div class="content">
+            <p class="small">Do not pick up any coffee or drinks or whatsoever from the cafeteria, we got something better!!!</p>
+            <ol>
+              <li>Heat water just off boil (≈ 96°C).</li>
+              <li>Add 2–3 tbsp medium‑coarse Vietnamese coffee to the <em>phin</em>.</li>
+              <li>Bloom with a splash of hot water (20–30s), then fill and let drip 4–5 minutes.</li>
+              <li>Stir in 1–2 tbsp condensed milk.</li>
+            </ol>
+          </div>
+        </template>
+
+        <template id="section-reflect-update">
+          <h2>Reflections &amp; Updates from previous mentoring session</h2>
+          <div class="content">
+            <ul>
+              <li>Updates on the contributions &amp; learnings in gig with Adhesive Materials</li>
+              <li>Updates on recent career interests and actions</li>
+            </ul>
+          </div>
+        </template>
+
+        <template id="section-questions">
+          <h2>Mentoring questions</h2>
+          <div class="content">
+            <ul>
+              <li>How do I make best use of your time?</li>
+              <li>What are usually your topics of interest?</li>
+              <li>How do I contribute meaningfully to this mentorship and upkeep it without losing touch (from YOUR point of view)?</li>
+            </ul>
+          </div>
+        </template>
+
+        <template id="section-location">
+          <h2>Meeting Location</h2>
+          <div class="content"><p>📍 Same old Lunch Cabinet A1, 1st floor at Biofore House</p></div>
+        </template>
+
+        <div class="footer">
+          <div class="small">Tip: Press <kbd>Enter</kbd> on a bubble, or tap on mobile.</div>
+          <div class="small">Print friendly via browser print if needed.</div>
         </div>
-      </template>
+      </section>
+    </main>
+  </div>
 
-      <template id="section-questions">
-        <h2>Mentoring questions</h2>
-        <div class="content">
-          <ul>
-            <li>How do I make best use of your time?</li>
-            <li>What are usually your topics of interest?</li>
-            <li>How do I contribute meaningfully to this mentorship and upkeep it without losing touch (YOUR point of view)?</li>
-          </ul>
-        </div>
-      </template>
+  <script>
+    const panelTitle = document.getElementById('panel-title');
+    const panelContent = document.getElementById('panel-content');
+    const templates = {
+      'section-brew': document.getElementById('section-brew'),
+      'section-reflect-update': document.getElementById('section-reflect-update'),
+      'section-questions': document.getElementById('section-questions'),
+      'section-location': document.getElementById('section-location')
+    };
 
-      <template id="section-location">
-        <h2>Meeting Location</h2>
-        <div class="content"><p>📍 Same old Lunch Cabinet A1, 1st floor</p></div>
-      </template>
-    </section>
-  </main>
-</div>
+    function showSection(id){
+      const tpl = templates[id];
+      if(!tpl) return;
+      const clone = tpl.content.cloneNode(true);
+      const h2 = clone.querySelector('h2');
+      const title = h2 ? h2.textContent : 'Details';
+      panelTitle.textContent = title;      // update title
+      // clear and append only the content AFTER the template's h2 to avoid duplicate headers
+      panelContent.innerHTML = '';
+      if(h2) h2.remove();
+      // append remaining nodes with a fade-in effect
+      const frag = document.createDocumentFragment();
+      Array.from(clone.children).forEach(n => {
+        n.classList && n.classList.add('fade-in');
+        frag.appendChild(n);
+      });
+      panelContent.appendChild(frag);
+    }
 
-<script>
-  const panelTitle=document.getElementById('panel-title');
-  const panelContent=document.getElementById('panel-content');
-  const templates={
-    'section-brew':document.getElementById('section-brew'),
-    'section-reflect-update':document.getElementById('section-reflect-update'),
-    'section-questions':document.getElementById('section-questions'),
-    'section-location':document.getElementById('section-location')
-  };
-  function showSection(id){
-    const tpl=templates[id]; if(!tpl) return;
-    const clone=tpl.content.cloneNode(true);
-    panelTitle.textContent=clone.querySelector('h2').textContent;
-    panelContent.innerHTML=''; panelContent.appendChild(clone);
-  }
-  document.querySelectorAll('.bubble').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      showSection(btn.getAttribute('data-target'));
-      btn.setAttribute('aria-expanded','true');
+    document.querySelectorAll('.bubble').forEach(btn => {
+      btn.addEventListener('click', () => {
+        showSection(btn.getAttribute('data-target'));
+        btn.setAttribute('aria-expanded','true');
+      });
+      btn.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault(); btn.click();
+        }
+      });
     });
-  });
-</script>
+  </script>
 </body>
 </html>
